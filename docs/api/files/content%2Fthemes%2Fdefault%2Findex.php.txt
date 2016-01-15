@@ -1,0 +1,195 @@
+<?php
+global $User;
+$message = "";
+if(isset($_POST['event']) && $_POST['event'] == "add_user") {
+	$_GET['m'] = "clients";
+	if($e = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+		$user = array(
+			'email' => $e,
+			'password' => "",
+			'company' => $_POST['company'],
+			'first_name' => $_POST['first_name'],
+			'last_name' => $_POST['last_name'],
+			'contact_number' => $_POST['contact_number']
+		);
+		//	Signup but don't login.
+		global $User;
+		if($User->signup($user, false)) {
+			$message = "Successfully Added {$_POST['company']} onto systems.";
+		} else {
+			$message = "User Signup Failed. Is this email already in our system?";
+		}
+	} else {
+		$message = "User Signup Failed. Please insert valid email address.";
+	}
+}
+?>
+<!doctype html>
+<html>
+<head>
+<title>Arty Administrative Area</title>
+	<!-- Add jQuery & UI libraries -->
+	<script type="text/javascript" src="//code.jquery.com/jquery-latest.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<!-- Add fancyBox main JS and CSS files -->
+	<script type="text/javascript" src="content/themes/dealsorter/js/fancybox/source/jquery.fancybox.js?v=2.1.5"></script>
+	<link rel="stylesheet" type="text/css" href="content/themes/dealsorter/js/fancybox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+	<!-- jRumble Shakes fancyBox -->
+	<script type="text/javascript" src="content/themes/default/js/jquery.jrumble.1.3.min.js"></script>
+	<!-- Ellipsis lib -->
+	<script type="text/javascript" src="content/themes/default/js/jquery.ellipsis.js"></script>
+	<!-- Our JS File -->
+	<script type="text/javascript" src="content/themes/default/js/js.js"></script>
+	<!-- Google Fonts -->
+	<link href='//fonts.googleapis.com/css?family=Amethysta|Cardo|Droid+Sans|Elsie:900|Varela+Round|Quicksand' rel='stylesheet' type='text/css'>
+	<!-- For Awsome Fonts! -->
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<!-- Our CSS -->
+	<link href="content/themes/default/css/style.css" rel='stylesheet' type='text/css'>
+	
+	<!-- Make Responsive Ready -->
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+	<?php if(!isset($_SESSION) || empty($_SESSION)) : ?>
+	<script type="text/javascript">
+		$(window).ready(function() {
+			$.fancybox({
+				href : '#login_wrapper',
+				autoSize: false,
+				width: 350,
+				height: 'auto',
+				helpers : { 
+					overlay : {closeClick: false} // prevents closing when clicking OUTSIDE fancybox 
+				},
+				closeBtn: false,
+				closeSpeed: "fast",
+
+			});
+		});
+	</script>
+	<?php endif ?>
+</head>
+<body>
+	<div id="top">
+		<div id="logo">
+			<h1>Arty // Admin Area</h1>
+			<?php if(isset($_SESSION) && !empty($_SESSION)) { ?>
+			<div id="top-right">
+				<?php echo $_SESSION['email']; ?>
+				<form method="post">
+					<button type="submit" name="p" value="logout">Logout</button>
+				</form>
+			</div>
+			<?php } ?>
+		</div>
+	</div>
+	<div id="wrapper">
+		<form method="post" id="login_wrapper">
+			<label for="email" class="email"><i class="fa fa-envelope-o"></i></label><input id="email" name="email" type="email" placeholder="Email" autofocus required>
+			<label for="password" class="email"><i class="fa fa-key"></i></label><input id="password" name="password" type="password" placeholder="Password">
+			<input type="checkbox" id="forgot_password" name="forgot">
+			<label for="forgot_password">Forgot Password?</label>
+			<button type="submit" name="p" value="login">Login</button>
+		</form>
+	<?php if(isset($_SESSION) && !empty($_SESSION)) { ?>
+		<div id="side-menu">
+			<div class="icon" id="clients">
+				<a href="?m=clients" title="Clients"><i class="fa fa-user fa-3x"></i></a>
+			</div>
+			<div class="icon" id="jobs">
+				<a href="?m=jobs" title="Jobs"><i class="fa fa-briefcase fa-3x"></i></a>
+			</div>
+			<div class="icon" id="invoices">
+				<a href="?m=invoices" title="Invoices"><i class="fa fa-envelope fa-3x"></i></a>
+			</div>
+		</div>
+		
+	<?php	if(isset($_GET['m'])) {
+			if($_GET['m'] == "clients") { 
+			$rows = "";
+			foreach($User->get_all() as $client) {
+				foreach($client as $key => $r) {
+					if($r == "") $client[$key] = "&nbsp;";
+				}
+				$rows .= "
+			<ul>
+				<li class=\"required name\">{$client['company']} ({$client['first_name']} {$client['last_name']})</li><!--
+				--><li class=\"required email\"><a href=\"mailto:{$client['email']}\">{$client['email']}</a></li><!--
+				--><li class=\"required contact_number\">{$client['contact_number']}</li><!--
+				--><li class=\"invoice\">&nbsp;</li><!--
+				--><li class=\"required edit-remove\"><i class=\"fa fa-pencil\" edit=\"{$client['id']}\"></i> <i class=\"fa fa-trash-o\"></i></li>
+			</ul>";
+			} 
+	?>
+		<span id="message"><?php echo $message; ?></span>
+		<form method="post" id="clients_wrapper">
+			<label for="email" class="email"><i class="fa fa-envelope-o"></i></label><input id="email" name="email" type="email" placeholder="Email" autofocus required>
+			
+			<label for="company" class="email"><i class="fa fa-building"></i></label><input id="company" name="company" type="text" placeholder="Company">
+			<label for="first_name" class="email"><i class="fa fa-user"></i></label><input id="first_name" name="first_name" type="text" placeholder="First Name"><input id="last_name" name="last_name" type="text" placeholder="Last Name">
+			<label for="contact_number" class="email"><i class="fa fa-phone"></i></label><input id="contact_number" name="contact_number" type="text" placeholder="Contact Number">
+			<button name="event" value="add_user" type="submit">Add User</button>
+		</form>
+		<span id="add" add="clients"><i class="fa fa-plus fa-2x"></i></span>
+		<ol class="table">
+			<li class="required name">Name</li><!--
+			--><li class="required email">Email</li><!--
+			--><li class="required contact_number">Contact Phone</li><!--
+			--><li class="invoice">Invoice (<b color="red">due</b>/<b color="green">paid</b>)</li><!--
+			--><li class="required edit-remove">+ / -</li>
+		</ol>
+		<?php echo $rows; ?>
+	<?php 		} else if($_GET['m'] == "jobs") { 
+				$rows = "";
+				$Jobs = new Job();
+				
+				$job = array("name" => "Content Management", "client" => "juan@soccerkraze.com");
+				
+				//$Jobs->add($job);
+				$select = '<select id="name" name="name">';
+				foreach($User->get_all() as $client) {
+					$select .= "<option value=\"{$client['email']}\">{$client['first_name']} {$client['last_name']}</option>";
+				}
+				$select .= "</select>";
+			?>
+		<form method="post" id="jobs_wrapper">
+			<label for="name" class="email"><i class="fa fa-briefcase"></i></label><input id="name" name="name" type="text" placeholder="Job Name" autofocus required><!--
+			--><label for="client" class="email"><i class="fa fa-user"></i></label><?php echo $select; ?><!--
+			--><label for="date_started" class="email" title="Date Started"><i class="fa fa-calendar"></i></label><input type="date" name="date_started" id="date_started"><!--
+			--><label for="date_due" class="email" title="Date Due"><i class="fa fa-clock-o"></i></label><input type="date" name="date_due" id="date_due"><!--
+			--><label for="date_completed" class="email" title="Date Completed"><i class="fa fa-check"></i></label><input type="date" name="date_completed" id="date_completed"><!--
+			--><button type="submit" name="event" value="add_job">Add Job</button>
+		</form>
+			<?php
+				
+				foreach($Jobs->get_all() as $job) {
+				$rows .= "
+			<tr>
+				<td>{$job['name']}</td>
+				<td>{$job['client']}</td>
+				<td>Completed</td>
+				<td></td>
+				<td></td>
+				<td class=\"required edit-remove\"><i class=\"fa fa-pencil\"></i> <i class=\"fa fa-trash-o\"></i></td>
+			</tr>";
+				} ?>
+		<span id="add" add="jobs"><i class="fa fa-plus fa-2x"></i></span>
+		<table border="1" cellpadding="5" cellspacing="0">
+			<tr>
+				<th>Job Name</th>
+				<th>Client</th>
+				<th>Status</th>
+				<th>Job Total</th>
+				<th>Invoice (<b color="red">due</b>/<b color="green">paid</b>)</th>
+				<th>+ / -</th>
+			<?php echo $rows; ?>
+		</table>
+	<?php		}
+		}
+	}
+	?>
+	</div>
+	<p id="back-top" class="hide"><a>^</a></p>
+	<footer></footer>
+</body>
+</html>
+

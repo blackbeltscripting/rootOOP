@@ -1,0 +1,45 @@
+<?php
+/**
+ * Defines all constants in Global Scope.
+ *
+ *
+ */
+
+/** Current Site Version */
+define("VERSION", "0.1.0");
+
+/** Current API Name */
+define("API_NAME", "rootOOP");
+
+
+/**	Defines Absolute Path as this directory. */
+define('ABSPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+
+/** The includes path. Currently empty. */
+define('INCLUDES', ABSPATH . "includes" . DIRECTORY_SEPARATOR);
+
+/** The Classes path. Holds all classes in API. */
+define('CLASSES', INCLUDES . "classes" . DIRECTORY_SEPARATOR);
+
+/** The Admin path. Currently under development. */
+define('ADMIN', ABSPATH . "admin" . DIRECTORY_SEPARATOR);
+
+/** The Content path. Currently empty.
+ * @todo Will be used for uploading (maybe) directories. */
+define('CONTENT', ABSPATH . "content" . DIRECTORY_SEPARATOR);
+
+/** The Themes directory. This will have all installed themes in the API. */
+define('THEMES', ABSPATH . join(DIRECTORY_SEPARATOR, array("content", "themes")) . DIRECTORY_SEPARATOR);
+
+/**	Defines Session HASH type. */
+define('SESSION_HASH_FUNCTION', 'whirlpool');
+
+/** Session bits per character. Using '4' to comply with OWASP standard. */
+define('SESSION_HASH_BITS_PER_CHARACTER', 4);
+
+/** Session hostname will be this hostname. */
+define('SESSION_HOSTNAME', $_SERVER['HTTP_HOST']);
+
+/** Session name as appears in element inspector. */
+define('SESSION_NAME', "auth_token");
+

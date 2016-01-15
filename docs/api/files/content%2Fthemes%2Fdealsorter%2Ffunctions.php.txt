@@ -1,0 +1,52 @@
+<?php
+
+
+function send_email($e, $fp_token) {
+	//	sends forgot password email
+	return false;
+}
+
+
+if(isset($_POST['p']) && $p = $_POST['p']) {
+	global $User;
+	switch ($p) {
+		case 'signup' :
+			if($e = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+				$user['email'] = $_POST['email'];
+				$user['password'] = $_POST['password'];
+				$User->signup($user);				
+			}
+			break;
+		case 'forgot' :
+			//	filter name
+			if($e = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+				//	look for it in db.
+				//	temp
+				$query = $e;
+
+				//	if match, send email
+				if($e == $query) {
+					//	create forgot pass hash token
+					$fp_token = password_hash("forgot_password_token", PASSWORD_DEFAULT);
+					//	Query it into user
+					
+					//$db->query("UPDATE ...");
+					send_email($e, $fp_token);
+				} else {			
+					//	else, send email stating you are not yet a member, signup
+					send_email($e, "not_user");
+				}
+			}
+			break;
+		case 'login' :
+			if($e = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+				$User->authenticate($e, $_POST['password']);	
+			}
+			break;
+		case 'logout' :
+			//	Logs out without prejudice.
+			$User->logout();
+			break;
+	}
+}
+

@@ -1,0 +1,29 @@
+<?php
+/**
+ * Defines all constants in Global Scope.
+ *
+ *
+ */
+namespace rootOOP;
+
+/** Current Site Version */
+define("VERSION", "0.1.0");
+
+
+//	Defines Absolute Path as this directory
+define('ABSPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+define('INCLUDES', ABSPATH . "includes" . DIRECTORY_SEPARATOR);
+define('CLASSES', INCLUDES . "classes" . DIRECTORY_SEPARATOR);
+define('CORE', ABSPATH . join(DIRECTORY_SEPARATOR, array("includes", "classes", "core")) . DIRECTORY_SEPARATOR);
+define('ADMIN', ABSPATH . "admin" . DIRECTORY_SEPARATOR);
+define('CONTENT', ABSPATH . "content" . DIRECTORY_SEPARATOR);
+define('THEMES', ABSPATH . join(DIRECTORY_SEPARATOR, array("content", "themes")) . DIRECTORY_SEPARATOR);
+
+//	Defines Session HASH
+define('SESSION_HASH_FUNCTION', 'whirlpool');
+define('SESSION_HASH_BITS_PER_CHARACTER', 4);
+
+define('SESSION_HOSTNAME', $_SERVER['HTTP_HOST']);
+
+define('SESSION_NAME', "auth_token");
+

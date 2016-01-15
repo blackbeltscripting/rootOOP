@@ -1,0 +1,119 @@
+<?php
+
+namespace rootOOP\Admin;
+
+function send_email($e, $fp_token) {
+	//	sends forgot password email
+	return false;
+}
+
+
+if(isset($_POST['p']) && $p = $_POST['p']) {
+	global $User;
+	switch ($p) {
+		case 'signup' :
+			if($e = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+				$user['email'] = $_POST['email'];
+				$user['password'] = $_POST['password'];
+				$User->signup($user);				
+			}
+			break;
+		case 'forgot' :
+			//	filter name
+			if($e = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+				//	look for it in db.
+				//	temp
+				$query = $e;
+
+				//	if match, send email
+				if($e == $query) {
+					//	create forgot pass hash token
+					$fp_token = password_hash("forgot_password_token", PASSWORD_DEFAULT);
+					//	Query it into user
+					
+					//$db->query("UPDATE ...");
+					send_email($e, $fp_token);
+				} else {			
+					//	else, send email stating you are not yet a member, signup
+					send_email($e, "not_user");
+				}
+			}
+			break;
+		case 'login' :
+			if($e = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+				$User->authenticate($e, $_POST['password']);	
+			}
+			break;
+		case 'logout' :
+			//	Logs out without prejudice.
+			$User->logout();
+			break;
+	}
+}
+
+class Job {
+	function __construct() {
+		global $MySQL;
+		
+		$table = (object) [
+			'name' => 'jobs', 
+			'cols' => array( 
+				(object) [
+					'name' => 'id',
+					'type' => 'BIGINT',
+					'type_num' => '20',
+					'extra' => 'AUTO_INCREMENT PRIMARY KEY'
+				],
+				(object) [
+					'name' => 'name',
+					'type' => 'VARCHAR',
+					'type_num' => '255',
+					'extra' => false
+				],
+				(object) [
+					'name' => 'client',
+					'type' => 'VARCHAR',
+					'type_num' => '100',
+					'extra' => false
+				],
+				(object) [
+					'name' => 'date_started',
+					'type' => 'DATETIME',
+					'type_num' => false,
+					'extra' => false
+				],
+				(object) [
+					'name' => 'date_due',
+					'type' => 'DATETIME',
+					'type_num' => false,
+					'extra' => false
+				],
+				(object) [
+					'name' => 'date_completed',
+					'type' => 'DATETIME',
+					'type_num' => false,
+					'extra' => false
+				]
+			)
+		];
+		$MySQL->check_table($table);
+	}
+	function get_all($id = false) {
+		global $MySQL;
+		$where = "";
+		if($id !== false) {
+			$where = "WHERE client_id = $id";
+		}
+		return $MySQL->query("SELECT * FROM " . TABLE_PREFIX . "jobs $where")->fetchAll(PDO::FETCH_ASSOC);
+	}
+	function add($jobs = false) {
+		if(is_array($jobs)) {
+			global $MySQL;
+			$MySQL->insert("jobs", $jobs);
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+

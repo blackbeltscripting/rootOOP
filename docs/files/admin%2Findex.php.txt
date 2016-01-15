@@ -1,0 +1,47 @@
+<?php
+/*
+ *	Arty // Web Design and Programming
+ *	just a test.
+*/
+
+//	Load all Defines
+require_once(dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . "defines.php");
+//	Load Environment
+require_once( CORE . 'File.php' );
+
+if($File->exists(ABSPATH . 'config.php')) {
+	//	Loads User Configurations
+	$File->load(ABSPATH . 'config.php');
+
+	//	Loads all classes objects
+	$File->load_dir(CLASSES);
+
+	//	Make MySQL Connection
+	$MySQL->connect();
+	
+	//	Determine if user is logged in
+	if($User->is_logged()) {
+		$File->load_dir(join(DIRECTORY_SEPARATOR, array(ADMIN, "controller", "Options.php")));
+		
+		echo "<pre>";
+		$os = array("black", "blue", "t" => "green");
+		//$o = $Options->add("background-color", $os);
+		
+		
+		$o = $Options->get("background-color");
+		
+		print_r($o);
+		//print_r($Options->delete("test"));
+	}
+	
+	
+
+	//print_r($MySQL->query("SELECT * FROM wp_options")->num_rows); //	Works!
+} else {
+	//	Installs new System
+	//header('Location: install/index.php');
+	//exit;
+}
+
+?>
+

@@ -1,0 +1,334 @@
+<?php
+/**
+ * User File.
+ *
+ * Contains User Class
+ */
+
+/**
+ * User Class
+ *
+ * Responsible for login/out, authentification, forgot passwords auth tokens, etc.
+ */
+class User
+{
+    /**
+     * Using Higher Entropy functionality to create PRNG characters.
+     *
+     * (Used specifically for forgot password auth token).
+     *
+     * @see http://stackoverflow.com/questions/3290283/what-is-a-good-way-to-produce-a-random-site-salt-to-be-used-in-creating-passwo/3291689#3291689 Source of code.
+     * @todo I'm guessing this will have to be switched later to a higher entropy PRNG as this seems to be a weak area of programming itself.
+     * 
+     * @param integer $min minimum entropy.
+     * @param integer $max maximum entropy.
+     *
+     * @todo What is this returning?
+     */
+    private function cryptoRandSecure($min, $max)
+    {
+        $range = $max - $min;
+        if ($range < 0) return $min; // not so random...
+        $log = log($range, 2);
+        $bytes = (int) ($log / 8) + 1; // length in bytes
+        $bits = (int) $log + 1; // length in bits
+        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+        do {
+            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+            $rnd = $rnd & $filter; // discard irrelevant bits
+        } while ($rnd >= $range);
+        return $min + $rnd;		
+    }
+
+    /**
+     * Create a Token Using Higher Entropy functionality to create PRNG characters.
+     *
+     * (Used specifically for forgot password auth token).
+     *
+     * @see http://stackoverflow.com/questions/3290283/what-is-a-good-way-to-produce-a-random-site-salt-to-be-used-in-creating-passwo/3291689#3291689 Source of code.
+     * @see User::cryptoRandSecure() cryptoRandSecure()
+     *
+     * @param integer $length The length of the token.
+     *
+     * @return string The authToken.
+     */
+    private function getToken($length=32)
+    {
+        $token = "";
+        $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+        $codeAlphabet.= "0123456789";
+        for($i=0;$i<$length;$i++) {
+            $token .= $codeAlphabet[$this->cryptoRandSecure(0,strlen($codeAlphabet))];
+        }
+        return $token;
+    }
+
+    /**
+     * Creates a user table if none is set in DB.
+     *
+     * @see MySQL::checkTable() MySQL::checkTable()
+     */
+    function __construct()
+    {
+        global $MySQL;
+
+        $table = (object) [
+            'name' => 'users', 
+            'cols' => array( 
+                (object) [
+                    'name' => 'id',
+                    'type' => 'BIGINT',
+                    'type_num' => '20',
+                    'extra' => 'AUTO_INCREMENT PRIMARY KEY'
+                ],
+                (object) [
+                    'name' => 'email',
+                    'type' => 'VARCHAR',
+                    'type_num' => '100',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'password',
+                    'type' => 'VARCHAR',
+                    'type_num' => '64',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'company',
+                    'type' => 'VARCHAR',
+                    'type_num' => '255',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'first_name',
+                    'type' => 'VARCHAR',
+                    'type_num' => '50',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'last_name',
+                    'type' => 'VARCHAR',
+                    'type_num' => '50',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'contact_number',
+                    'type' => 'VARCHAR',
+                    'type_num' => '20',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'registered_date',
+                    'type' => 'DATETIME',
+                    'type_num' => false,
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'pass_verify_token',
+                    'type' => 'VARCHAR',
+                    'type_num' => '205',
+                    'extra' => false
+                ],
+            )
+        ];
+        $MySQL->checkTable($table);
+    }
+
+    /**
+     * Check to see if there is an open session.
+     *
+     * @return boolean True if logged.
+     */
+    final public function isLogged()
+    {
+        return (isset($_SESSION) && !empty($_SESSION));
+    }
+
+    /**
+     * Login function.
+     *
+     * Creates a session and is open for developers to create custom functionality.
+     */
+    public function login()
+    {
+        $_SESSION = $this->db;
+    }
+
+    /**
+     * Gets user object
+     *
+     * @see MySQL::select() MySQL::select()
+     *
+     * @param string $email Email of requested user.
+     * @param boolean $safe If set to true, will only give the email and registered date.
+     *
+     * @todo Work on this function.
+     */
+    final function get($email, $safe = false)
+    {
+        global $MySQL;
+
+        if($this->db = $MySQL->select("users", array("email" => $email))) {
+            if($safe == true) {
+                return array("email" => $this->db['email'], "registered_date" => $this->db['registered_date']);
+            } else {
+                return $this->db;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Gets all users
+     *
+     * @see MySQL::query()
+     *
+     * @todo Must create a if auth level, remove sensitive information.
+     *
+     * @return mixed[boolean|object] Gets all the users including sensitive information.
+     */
+    final public function getAll()
+    {
+        global $MySQL;
+
+        //	NOTE: MUST CREATE A IF AUTH LEVEL
+        return $MySQL->query("SELECT * FROM " . TABLE_PREFIX . "users")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Authenticates User
+     *
+     * @see User::login() login()
+     *
+     * @param string $email User Email
+     * @param string $pass Raw Password
+     *
+     * @return boolean True if success.
+     */
+    final public function authenticate($email, $pass)
+    {	
+        if($this->get($email)) {
+            if(password_verify($pass, $this->db['password'])) {
+                /***	 Authetification Complete.	***/
+                $this->login();
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * User Signup.
+     * Creates a new user if not yet in DB. With the option of automatic user login.
+     *
+     * @see User::get() get()
+     * @see MySQL::insert() MySQL::insert()
+     * @see User::authenticate() User::authenticate()
+     *
+     * @param object $user The new user.
+     * @param boolean $login Logs user in automatically
+     *
+     * @return mixed[boolean|object] True if success. False if fail. [object] If automatic user login success.
+     */
+    final public function signup($user, $login = true)
+    {	
+        global $MySQL;
+
+        if(!$this->get($user['email'])) {
+            //	Register now.
+            $user['registered_date'] = date("Y-m-d H:i:s");
+            if($login === true) {
+            //	Hash password.
+            $raw_pass = $user['password'];
+            $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
+            }
+            //	Empty token.
+            $user['pass_verify_token'] = "";
+            //	Insert into DB.
+            $MySQL->insert("users", $user);			
+
+            //	Log user in if it's signup/login
+            if($login === true) {
+                return $this->authenticate($user['email'], $raw_pass);
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Forgot Password Function.
+     * Emails auth token and inserts it to the DB.
+     *
+     * @see User::get() get()
+     * @see MySQL::update() MySQL::update()
+     *
+     * @todo Create expiration date for auth.
+     *
+     * @param string $email Email of requested password renewal.
+     *
+     * @return boolean True if success.
+     */
+    final function forgotPassword($email)
+    {
+        if($this->get($email)) {
+            //	Forge key
+            $key = $this->getToken(64);
+            $forward = false;
+            if(!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+                $forward = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
+            //	This array is set EXACTLY to these parameters in DB
+            $pass_verify_token = array(
+                "key" => $key,
+                "date" => time(),
+                "REMOTE_ADDR" => $_SERVER['REMOTE_ADDR'],
+                "HTTP_X_FORWARDED_FOR'" => $forward
+            );
+
+            global $MySQL;
+
+            //	Inserts key to DB
+            if($this->db = $MySQL->update(
+                    "users", 
+                    array("pass_verify_token" => serialize($pass_verify_token) ),
+                    array("email" => $email)
+                )
+            ) {
+                //	Merge key onto email
+                $email = sprintf(FORGOT_PASSWORD_EMAIL, $key);
+
+                //	Create time limit for forgot password token.
+
+                //	Send Email & return true.
+                $subject = 'Forgot Password Request';
+                $headers = 'From: no-reply@' . $_SERVER['HTTP_HOST'] . "\r\n" .
+                    'X-Mailer: PHP/' . phpversion();
+                mail($email, $subject, $email, $headers);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Logs out current client.
+     *
+     * @return boolean True if success.
+     */
+    final public function logout()
+    {
+        session_destroy();
+        unset($_SESSION);
+        return true;
+    }
+}
+

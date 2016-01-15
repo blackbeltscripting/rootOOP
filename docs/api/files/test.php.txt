@@ -1,0 +1,6 @@
+<?php
+
+$eo = openssl_random_pseudo_bytes(1, $o);
+var_dump($o);
+?>
+

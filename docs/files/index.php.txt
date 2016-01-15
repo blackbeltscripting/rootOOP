@@ -1,0 +1,50 @@
+<?php
+/**
+ * Arty // Web Design and Programming
+ *
+ * Now follows PSR-1, PSR-2, (I don't know how to log yet.), PSR-4 , and preparing for PSR-5 (not yet standardized).
+ * Also trying to follow OWASP standards.
+ *	
+ * @author Eric Ghiraldello <ericg@arty-web-design.com>
+ * @version 1.2.0
+ */
+ 
+// Loads all prereqs
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "defines.php");
+require_once(ABSPATH . 'config.php');
+require_once(ABSPATH . 'session.php');
+
+/**
+ * PSR-4 Standard
+ *
+ * @see http://www.php-fig.org/psr/psr-4/ PSR-4
+ */
+spl_autoload_register(function($class) {
+    $filename = CLASSES . $class . '.php';
+    
+    if(is_readable($filename) && !empty($filename))
+        include_once $filename; 
+});
+
+/** Loading all Default Classes */
+$MySQL = new MySQL();
+$Options = new Options();
+
+//	Get all Themes in Dir
+foreach(glob( THEMES . "*" ) as $theme_dirname) {
+    $theme_dirname_arr = explode("/", $theme_dirname);			
+    $theme = end($theme_dirname_arr);
+
+    //	If no active theme, create default option.
+    if(NULL === $Options->get(TABLE_PREFIX . "active_theme"))
+        $Options->add(TABLE_PREFIX . "active_theme", DEFAULT_THEME);
+    //	Look for active theme and load it.
+    if($theme == $Options->get(TABLE_PREFIX . "active_theme")) {
+        //	Theme functions
+        require_once($theme_dirname . DIRECTORY_SEPARATOR . "functions.php");
+
+        //	Main Page
+        require_once($theme_dirname . DIRECTORY_SEPARATOR . "index.php");
+    }		
+}
+

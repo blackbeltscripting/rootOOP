@@ -1,0 +1,107 @@
+<?php
+/**
+ * Jobs Page
+ *
+ * Contains Jobs Class
+ */
+
+/**
+ * Jobs Class
+ *
+ * Creates, edits, removes jobs.
+ */
+class Job
+{
+    /**
+     * Creates a user table if none is set in DB.
+     *
+     * @see MySQL::check_table() MySQL::check_table()
+     *
+     */
+    function __construct()
+    {
+        global $MySQL;
+        $table = (object) [
+            'name' => 'jobs', 
+            'cols' => array( 
+                (object) [
+                    'name' => 'id',
+                    'type' => 'BIGINT',
+                    'type_num' => '20',
+                    'extra' => 'AUTO_INCREMENT PRIMARY KEY'
+                ],
+                (object) [
+                    'name' => 'name',
+                    'type' => 'VARCHAR',
+                    'type_num' => '255',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'client',
+                    'type' => 'VARCHAR',
+                    'type_num' => '100',
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'date_started',
+                    'type' => 'DATETIME',
+                    'type_num' => false,
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'date_due',
+                    'type' => 'DATETIME',
+                    'type_num' => false,
+                    'extra' => false
+                ],
+                (object) [
+                    'name' => 'date_completed',
+                    'type' => 'DATETIME',
+                    'type_num' => false,
+                    'extra' => false
+                ]
+            )
+        ];
+        $MySQL->checkTable($table);
+    }
+
+    /**
+     * Gets all jobs
+     *
+     * @see MySQL::query() MySQL::query()
+     *
+     * @param integer $id The client's DB ID#
+     *
+     * @return mixed The raw database result.
+     */
+    public function getAll($id = false)
+    {
+        global $MySQL;
+        $where = "";
+        if($id !== false) {
+            $where = "WHERE client_id = $id";
+        }
+        return $MySQL->query("SELECT * FROM " . TABLE_PREFIX . "jobs $where")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Adds a job
+     *
+     * @see MySQL::insert() MySQL::insert()
+     *
+     * @param array $jobs Job information: name, date created, etc.
+     *
+     * @return boolean True if success.
+     */
+    public function add($jobs = false)
+    {
+        if(is_array($jobs)) {
+            global $MySQL;
+            $MySQL->insert("jobs", $jobs);
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+

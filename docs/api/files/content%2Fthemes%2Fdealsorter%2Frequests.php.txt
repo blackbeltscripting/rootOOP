@@ -1,0 +1,31 @@
+<?php
+
+if(isset($_POST['x']) && $x = $_POST['x']) {
+	switch ($x) {
+		case "ebay" :
+			$c = 20;
+			if(isset($_POST['c']) && is_numeric($_POST['c']))
+				$c = $_POST['c'];
+			$data = file_get_contents("http://api.epn.ebay.com/deals/v1/country/us/feed/json?count=$c");
+			break;
+
+	
+
+		default:
+			$data = array( "error" => array(
+					"date" => date("Y-m-d H:i:s"),
+					"output" => "Failed to retrieve ajax request.",
+					"server" => $_SERVER
+				)
+			);
+			break;
+	}
+	send($data);
+}
+function send($data = false) {
+	header('Content-Type: application/json');
+	if($data === false) 
+		$data = array("error" => array("date" => date("Y-m-d H:i:s"), "output" => "Failed to output ajax request. No \$data defined.", "server" => $_SERVER));
+	echo $data; exit;
+}
+
