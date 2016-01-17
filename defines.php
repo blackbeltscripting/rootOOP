@@ -5,24 +5,27 @@
  *
  */
 
-/** Defines Absolute Path as this directory. */
-define('ABSPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+/** Defines Absolute Path as the directory one above this. */
+define('ABSPATH', dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+
+/** Defines System Path as this directory. */
+define('SYSPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
 /** The includes path. Currently empty. */
-define('INCLUDES', ABSPATH . "includes" . DIRECTORY_SEPARATOR);
+define('INCLUDES', SYSPATH. "includes" . DIRECTORY_SEPARATOR);
 
 /** The Classes path. Holds all classes in API. */
 define('CLASSES', INCLUDES . "classes" . DIRECTORY_SEPARATOR);
 
 /** The Admin path. Currently under development. */
-define('ADMIN', ABSPATH . "admin" . DIRECTORY_SEPARATOR);
+define('ADMIN', SYSPATH. "admin" . DIRECTORY_SEPARATOR);
 
 /** The Content path. Currently empty.
  * @todo Will be used for uploading (maybe) directories. */
-define('CONTENT', ABSPATH . "content" . DIRECTORY_SEPARATOR);
+define('CONTENT', SYSPATH. "content" . DIRECTORY_SEPARATOR);
 
 /** The Themes directory. This will have all installed themes in the API. */
-define('THEMES', ABSPATH . join(DIRECTORY_SEPARATOR, array("content", "themes")) . DIRECTORY_SEPARATOR);
+define('THEMES', join(DIRECTORY_SEPARATOR, array(dirname(dirname(__FILE__)), "themes")) . DIRECTORY_SEPARATOR);
 
 /** Session bits per character. Using '4' to comply with OWASP standard. */
 define('SESSION_HASH_BITS_PER_CHARACTER', 4);
