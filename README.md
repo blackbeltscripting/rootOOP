@@ -21,7 +21,7 @@ rootOOP will automatically filter and validate posted (raw user) input so you do
 
 ## Development of rootOOP:
 
-This is being currently developed for system administration (creating clients, managing clients, sending invoices, managing income, etc...), but can be branched to do many other things. This is the reason why rootOOP is so raw. It is intended to be lightweight and efficient. If you'd like rootOOP to manage your sales, this should be developed as a plugin.
+This is being currently developed for system administration (creating clients, managing clients, sending invoices, managing income, etc...), but can be branched to do many other things. This is the reason why rootOOP is so raw. It is intended to be lightweight and efficient. If you'd like rootOOP to manage your site, this should be developed as a plugin.
 
 
 ## Help
