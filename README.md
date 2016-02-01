@@ -1,6 +1,6 @@
 # rootOOP
 
-This project is designed to create the safest PHP script possible by moving all vulnerable functions to one file and calling them remotely. This automatically creates a MVC environment. Think of rootOOP as an automatic Model. A wiki will be coming soon.
+This is designed to create the safest PHP script possible by moving all vulnerable functions to one file and calling them remotely. This automatically creates a MVC environment. Think of rootOOP as an automatic Model. A wiki will be coming soon.
 
 **This project is still in development.**
 
