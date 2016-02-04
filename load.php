@@ -25,6 +25,7 @@ spl_autoload_register(function($class) {
 
 /** Loading all Default Classes */
 $MySQL  = new MySQL();
+$Option = array();
 $Option['active_theme'] = new Option(TABLE_PREFIX . "active_theme");
 $User = new User();
 
