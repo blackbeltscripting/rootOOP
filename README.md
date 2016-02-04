@@ -12,8 +12,6 @@ The objective of this project is to copy this folder onto a development area and
 
 The best way to use this is currently by reading the script. It is now very small and can be easily understood if you have a grasp of OOP. (If you don't know what OOP means, wait for the wiki to try this.)
 
-### Sample Codes for rootOOP:
-
     $MySQL->insert('table', array('name' => 'value', 'name2' => 'value2' ... ));
     $User->authenticate(array('username' => 'posted_user', 'password' => 'posted_password'));
 

@@ -1,0 +1,35 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ABSPATH	defines.php	/^define('ABSPATH', dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);$/;"	d
+ADMIN	defines.php	/^define('ADMIN', SYSPATH. "admin" . DIRECTORY_SEPARATOR);$/;"	d
+ALLOW_TABLE_INSERT	defines.php	/^define('ALLOW_TABLE_INSERT', true);$/;"	d
+Ajax	load.php	/^$Ajax = new Post("ajax");$/;"	v
+CLASSES	defines.php	/^define('CLASSES', INCLUDES . "classes" . DIRECTORY_SEPARATOR);$/;"	d
+CONTENT	defines.php	/^define('CONTENT', SYSPATH. "content" . DIRECTORY_SEPARATOR);$/;"	d
+ForgotPass	forgot_password.php	/^		$ForgotPass = new Form("login_process");$/;"	v
+INCLUDES	defines.php	/^define('INCLUDES', SYSPATH. "includes" . DIRECTORY_SEPARATOR);$/;"	d
+MySQL	load.php	/^$MySQL  = new MySQL();$/;"	v
+PASSWORD_TOKEN_LIFESPAN	defines.php	/^define('PASSWORD_TOKEN_LIFESPAN', 60*24);$/;"	d
+Post	load.php	/^$Post = new Post();$/;"	v
+ROOP_PATH	defines.php	/^define('ROOP_PATH', 'rP');$/;"	d
+Results	ajax.php	/^    $Results = json_encode(array("error" => array("date" => date("Y-m-d H:i:s"), "output" => "Failed to output ajax request. No \\$Result defined.", "server" => $_SERVER)));$/;"	v
+Results	ajax.php	/^$Results = $Ajax->process();$/;"	v
+Results	forgot_password.php	/^$Results = $Post->process();$/;"	v
+Results	index.php	/^$Results = $Post->process();$/;"	v
+Results	validate_email.php	/^$Results = $Post->process();$/;"	v
+SESSION_HASH_BITS_PER_CHARACTER	defines.php	/^define('SESSION_HASH_BITS_PER_CHARACTER', 4);$/;"	d
+SESSION_REGENERATE_ID	defines.php	/^define('SESSION_REGENERATE_ID', false);$/;"	d
+SESSION_SECURE	defines.php	/^define('SESSION_SECURE', false);$/;"	d
+SYSPATH	defines.php	/^define('SYSPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);$/;"	d
+THEMES	defines.php	/^define('THEMES', join(DIRECTORY_SEPARATOR, array(dirname(dirname(__FILE__)), "themes")) . DIRECTORY_SEPARATOR);$/;"	d
+THEME_PATH	load.php	/^		define("THEME_PATH", $theme_dirname . DIRECTORY_SEPARATOR);$/;"	d
+User	load.php	/^$User = new User();$/;"	v
+VERSION	index.php	/^define("VERSION", "0.12.3");$/;"	d
+filename	load.php	/^	$filename = CLASSES . $class . '.php';$/;"	v
+t	load.php	/^	$t = explode("\/", $theme_dirname);$/;"	v
+theme	load.php	/^$theme = "";$/;"	v
+theme_name	load.php	/^	$theme_name = end($t);$/;"	v
