@@ -10,6 +10,12 @@ The objective of this project is to copy this folder onto a development area and
 
 ## How do I use it?
 
+Install the `rootOOP/` folder in your dev site:
+
+Create an `index.php` and a `ajax.php` page and have them point to the `rootOOP/` folder:
+
+`<?php include_once 'rootOOP/index.php'; ?>`
+
 The best way to use this is currently by reading the script. It is now very small and can be easily understood if you have a grasp of OOP. (If you don't know what OOP means, wait for the wiki to try this.)
 
     $MySQL->insert('table', array('name' => 'value', 'name2' => 'value2' ... ));

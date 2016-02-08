@@ -17,10 +17,15 @@ require_once INCLUDES.'session.php';
  * NOTE: This anonymous function does not work with PHP <= 5.4 [TESTED]
  */
 spl_autoload_register(function($class) {
-	$filename = CLASSES . $class . '.php';
+	$rootClass = CLASSES . $class . '.php';
+	$themeClass = THEMECLASS . $class . '.php';
 
-	if (is_readable($filename) && !empty($filename))
-		include_once $filename;
+	if ( !empty($rootClass) || !empty($themeClass) ) {
+		if (is_readable($rootClass))
+			include_once $rootClass;
+		elseif (is_readable($themeClass))
+			include_once $themeClass;
+	}
 });
 
 /** Loading all Default Classes */
