@@ -88,6 +88,8 @@ STEP 5: Add Object in Control and call it in View
 
 **This part of the Readme is still under construction.**
 
+(Need to explain how to instantiate the form object. How form has 3 args: id, method, ajax callback name. How if ajax callback name is available, javascript will attempt to run function with the same name as the ajax callback variable.)
+
 ## Development of rootOOP:
 
 This is being currently developed for system administration (creating clients, managing clients, sending invoices, managing income, etc...), but can be branched to do many other things. This is the reason why rootOOP is so raw. It is intended to be lightweight and efficient. If you'd like rootOOP to manage your sales, this should be developed as a plugin.
