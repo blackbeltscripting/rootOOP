@@ -34,21 +34,21 @@ STEP 1: Study the `rootOOP/includes/classes/` folder and all its functions.
 
 STEP 2: Create desired controller in your `themes/{your-theme}/functions.php` folder:
 
-`<?php
-function addTask()
-{
-	if (isset($_POST['description']) && $_POST['description'] != "") {
-		if (is_numeric($_POST['hours_billing']) && is_numeric($_POST['hr_rate'])) {
-			$Job = new Job();
-			return $Job->addTask($_POST);
+	<?php
+	function addTask()
+	{
+		if (isset($_POST['description']) && $_POST['description'] != "") {
+			if (is_numeric($_POST['hours_billing']) && is_numeric($_POST['hr_rate'])) {
+				$Job = new Job();
+				return $Job->addTask($_POST);
+			} else {
+				return array("error" => "You must enter digits in hours/rate.");
+			}
 		} else {
-			return array("error" => "You must enter digits in hours/rate.");
+			return array("error" => "You must add a taskname");
 		}
-	} else {
-		return array("error" => "You must add a taskname");
 	}
-}
-?>`
+	?>
 
 STEP 3: Instantiate the function through POST and/or AJAX in your `themes/{your-theme}/functions.php` folder:
 
@@ -56,29 +56,33 @@ STEP 3: Instantiate the function through POST and/or AJAX in your `themes/{your-
 
 STEP 4: Return your AJAX/POST in your `themes/{your-theme}/index.php` folder:
 
-`<script>
-function addTask(r)
-{
-	var message = "";
-	if (typeof r === 'object') {
-		if (typeof r.error !== 'undefined') {
-			message = "Please fill all boxes to add a new task.";
-		} else {
-			console.log(r);
-		}
-	} else {
-		message = "There was an error with your request. Please try again later.";
-	}
-	if (message.length > 0) {
-		$("#message").not(":hidden", function(){ $(this).hide();});
-		$("#message").addClass("red").html(message).fadeIn(400, function() {
-			setTimeout(function() {
-				$("#message").fadeOut(400, function() { $(this).removeClass().html(""); });
-			}, 5000);
-		});
-	}
-}
-</script>`
+	<html>
+		<head>
+			<script>
+			function addTask(r)
+			{
+				var message = "";
+				if (typeof r === 'object') {
+					if (typeof r.error !== 'undefined') {
+						message = "Please fill all boxes to add a new task.";
+					} else {
+						console.log(r);
+					}
+				} else {
+					message = "There was an error with your request. Please try again later.";
+				}
+				if (message.length > 0) {
+					$("#message").not(":hidden", function(){ $(this).hide();});
+					$("#message").addClass("red").html(message).fadeIn(400, function() {
+						setTimeout(function() {
+							$("#message").fadeOut(400, function() { $(this).removeClass().html(""); });
+						}, 5000);
+					});
+				}
+			}
+			</script>
+		</head>
+	</html>
 
 STEP 5: Add Object in Control and call it in View
 
