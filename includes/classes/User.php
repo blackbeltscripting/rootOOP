@@ -288,8 +288,9 @@ class User
 		if (filter_var($id, FILTER_VALIDATE_INT, $this->userIdValidate)) {
 			if ($db = $MySQL->select("users", array("id" => $id))) {
 				// Remove sensitive "password" variable.
+				$db = filter_var_array($db, $this->sanitizeArgs);
 				unset($db['password']);
-				return filter_var_array($db, $this->sanitizeArgs);
+				return $db;
 			} else {
 				return false;
 			}
