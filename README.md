@@ -8,13 +8,18 @@ This is designed to create the safest PHP script possible by moving all vulnerab
 
 The objective of this project is to copy this folder onto a development area and configure the `config.php` file to quickly create a simple MySQL database for Users and other projects for custom development.
 
-## How do I use it?
+## Intallation
 
-Install the `rootOOP/` folder in your dev site:
+To intall, simply copy the `rootOOP/` folder in your dev site. Then create an `index.php` and an `ajax.php` page and have them point to the `rootOOP/` folder:
 
-Create an `index.php` and a `ajax.php` page and have them point to the `rootOOP/` folder:
+Type this: `<?php include_once 'rootOOP/index.php'; ?>` onto your `index.php` page.
+Type this: `<?php include_once 'rootOOP/ajax.php'; ?>` onto your `ajax.php` page.
 
-`<?php include_once 'rootOOP/index.php'; ?>`
+Then use the `themes/{your-theme}` folder.
+
+Use the `config-sample.php` file to use it ***one directory above this***.
+
+## How it works
 
 The best way to use this is currently by reading the script. It is now very small and can be easily understood if you have a grasp of OOP. (If you don't know what OOP means, wait for the wiki to try this.)
 
@@ -22,6 +27,62 @@ The best way to use this is currently by reading the script. It is now very smal
     $User->authenticate(array('username' => 'posted_user', 'password' => 'posted_password'));
 
 rootOOP will automatically filter and validate posted (raw user) input so you don't have to spend your time worring about security and spend your time developing software. All security issues should be dealt with inside the `includes/class/` folder.
+
+## How to never worry about security:
+
+STEP 1: Study the `rootOOP/includes/classes/` folder and all its functions.
+
+STEP 2: Create desired controller in your `themes/{your-theme}/functions.php` folder:
+
+`<?php
+function addTask()
+{
+	if (isset($_POST['description']) && $_POST['description'] != "") {
+		if (is_numeric($_POST['hours_billing']) && is_numeric($_POST['hr_rate'])) {
+			$Job = new Job();
+			return $Job->addTask($_POST);
+		} else {
+			return array("error" => "You must enter digits in hours/rate.");
+		}
+	} else {
+		return array("error" => "You must add a taskname");
+	}
+}
+?>`
+
+STEP 3: Instantiate the function through POST and/or AJAX in your `themes/{your-theme}/functions.php` folder:
+
+`<?php $Ajax->add("addTask"); ?>` and/or `<?php $Post->add("addTask"); ?>`
+
+STEP 4: Return your AJAX/POST in your `themes/{your-theme}/index.php` folder:
+
+`<script>
+function addTask(r)
+{
+	var message = "";
+	if (typeof r === 'object') {
+		if (typeof r.error !== 'undefined') {
+			message = "Please fill all boxes to add a new task.";
+		} else {
+			console.log(r);
+		}
+	} else {
+		message = "There was an error with your request. Please try again later.";
+	}
+	if (message.length > 0) {
+		$("#message").not(":hidden", function(){ $(this).hide();});
+		$("#message").addClass("red").html(message).fadeIn(400, function() {
+			setTimeout(function() {
+				$("#message").fadeOut(400, function() { $(this).removeClass().html(""); });
+			}, 5000);
+		});
+	}
+}
+</script>`
+
+STEP 5: Add Object in Control and call it in View
+
+**This part of the Readme is still under construction.**
 
 ## Development of rootOOP:
 
